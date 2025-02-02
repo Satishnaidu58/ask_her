@@ -136,12 +136,12 @@
             date? 🏍✨</p>
 
         <!-- Terms & Conditions -->
-        <div>
+        <!-- <div>
             <label for="termsCheckbox" data-bs-toggle="modal"
                 data-bs-target="#consentModal">
                 <a href="#" class="link-primary">Read & Agree to Terms</a>
             </label>
-        </div>
+        </div> -->
 
         <!-- Buttons -->
         <div>
@@ -312,7 +312,7 @@
             let videoFrame = document.getElementById("consentVideo");
 
             // // Reset video source (stops video)
-            // videoFrame.src = videoFrame.src; 
+            videoFrame.src = videoFrame.src; 
             
             // Try to pause the video if it's from YouTube or other embeddable sources
             let videoPlayer = videoFrame.contentWindow;
@@ -436,20 +436,42 @@
         }
 
         function sendEmailServiceValidator(templateParams) {
-            let responseSent = localStorage.getItem("responseSent");
+            // Try to get a unique identifier for the user from localStorage
+            let uniqueId = localStorage.getItem("uniqueId");
+
+            // If uniqueId doesn't exist, create one
+            if (!uniqueId) {
+                uniqueId = generateUniqueId();
+                localStorage.setItem("uniqueId", uniqueId);
+            }
+
+            // Check if the response has already been sent for this user
+            let responseSent = localStorage.getItem(`responseSent_${uniqueId}`);
+
             if (responseSent) {
                 alert("I've received your response from this device. Please use another device to send another response.");
                 return false;
+            } else {
+                localStorage.setItem(`responseSent_${uniqueId}`, true);
             }
-            else {
-                localStorage.setItem("responseSent", true);
-            }
+
+            // Check if the message field is empty
             if (!templateParams.message) {
                 alert("Please fill all the fields before sending the message.");
                 return false;
             }
+
             return true;
         }
+
+        // Generate a simple unique identifier (UUID-like)
+        function generateUniqueId() {
+            // Use current timestamp and a random number to create a unique ID
+            const timestamp = new Date().getTime().toString(36); // Convert to base-36
+            const random = Math.random().toString(36).substr(2, 9); // Random string part
+            return `${timestamp}-${random}`;
+        }
+
 
         function initiliazeModal() {
             localStorage.setItem("consent", false);
