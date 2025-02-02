@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>The Question</title>
+
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous">
+
+        <style>
+        /* Dark Theme */
+        body {
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Question Styling */
+        .question {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .btn-custom {
+            font-size: 1.2rem;
+            padding: 12px 24px;
+            border-radius: 5px;
+            margin: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-yes {
+            background: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        .btn-yes:hover {
+            background: #45a049;
+        }
+
+        .btn-no {
+            background: #f44336;
+            color: white;
+            border: none;
+        }
+
+        .btn-no:hover {
+            background: #d32f2f;
+        }
+
+        /* Response Message */
+        .response {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .show {
+            opacity: 1;
+        }
+
+        /* Love Shower Animation */
+        .love {
+            position: absolute;
+            animation: loveShower 1.5s infinite;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes loveShower {
+            0% {
+                transform: translateY(-50px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px);
+                opacity: 0;
+            }
+        }
+        
+        /* Modal Styling */
+        .modal-content {
+            background-color: #121212;
+            color: white;
+        }
+
+        .modal-header, .modal-footer {
+            border: none;
+        }
+
+        /* Initially hide the date picker */
+        #datePickerContainer {
+            display: none;
+        }
+
+                /* Smooth Fade-in Animation */
+        .fadeIn {
+            opacity: 0;
+            animation: fadeInAnimation 1s forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.5s; }
+        .delay-2 { animation-delay: 1s; }
+        .delay-3 { animation-delay: 1.5s; }
+
+        @keyframes fadeInAnimation {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    </head>
+    <body>
+
+        <!-- Question -->
+        <p class="question">Yo! How about a grand Hyderabad bhraman for a day
+            date? 🏍✨</p>
+
+        <!-- Terms & Conditions -->
+        <div>
+            <label for="termsCheckbox" data-bs-toggle="modal"
+                data-bs-target="#consentModal">
+                <a href="#" class="link-primary">Read & Agree to Terms</a>
+            </label>
+        </div>
+
+        <!-- Buttons -->
+        <div>
+            <button class="btn btn-custom btn-yes"
+                onclick="showResponse('yes')">✅ Yes</button>
+            <button class="btn btn-custom btn-no" onclick="showResponse('no')">❌
+                No</button>
+        </div>
+
+        <!-- Response Message -->
+        <p id="responseMessage" class="response"></p>
+
+        <!-- Date Picker -->
+        <div id="datePickerContainer">
+            <label for="datePicker">Pick a date for the mission: </label>
+            <input type="date" id="datePicker" class="form-control" />
+            <button class="btn btn-yes mt-2" onclick="sendEmail()">Send
+                Date</button>
+        </div>
+
+        <!-- Modal for No Click Confirmation -->
+        
+        <!-- Modal -->
+        <div class="modal fade" id="noModal" tabindex="-1" role="dialog" aria-labelledby="noModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="noModal">Oops, did you
+                    mean Yes?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    You clicked No by mistake! Are you sure you want to
+                    choose No? <br>
+                    Click "Yes" to go on a amazing date! or "No" to
+                    cancel.
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-yes" data-dismiss="modal" onclick="showResponse('yes')">✅ Yes</button>
+                <button type="button" class="btn btn-no" onclick="showRejectionResponse()">❌ No</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Rejection Modal -->
+        <div class="modal fade" id="rejectionModalId" tabindex="-1" role="dialog" aria-labelledby="rejectionModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg rounded">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title text-danger" id="rejectionModalTitle">💔 Thanks for Being Honest!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p class="h6 fadeIn">
+                            I thought you liked me—the way you gave me attention and cared for me. It really felt like there was something more.  
+                            Maybe I misunderstood, and that’s okay. 😊
+                        </p>
+                        <p class="h6 fadeIn delay-1">
+                            Honestly, I wasn’t even sure about my own feelings, but your kindness is something I truly admire.  
+                            It’s rare and special, and I really appreciate it. 💖
+                        </p>
+                        <p class="h6 fadeIn delay-2">
+                            Maybe it’s better we stay friends. Now that there's clarity, I think we can have more fun together as good friends! 👫  
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-outline-danger fadeIn delay-3" data-dismiss="modal" onclick="hideModal('#rejectionModalId')">Close 💔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consent Modal -->
+        <div class="modal fade" id="consentModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Consent is the most important
+                            thing in the world! ✅</h5>
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close" onclick="stopVideo()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe id="consentVideo"
+                                class="embed-responsive-item"
+                                src="videos/consent.mp4"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="mt-3">
+                            <input class="form-check-input" type="checkbox"
+                                id="modalConsentCheckbox">
+                            <label class="form-check-label"
+                                for="modalConsentCheckbox"> I Agree </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal"
+                            onclick="closeModal()">Close</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="acceptConsent()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts.Js -->
+        <script src="config.js"></script>
+
+        <!-- Bootstrap JS -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+        <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+        </script>
+
+        <script>
+
+        const EMAILJS_PUBLIC_KEY = CONFIG.EMAILJS_PUBLIC_KEY;
+        (function () {
+            emailjs.init({
+                publicKey: EMAILJS_PUBLIC_KEY,
+            });
+        })();
+        initiliazeModal()
+        const EMAIL_SERVICE_ID = CONFIG.EMAIL_SERVICE_ID;
+        const TEMPLATE_ID = CONFIG.TEMPLATE_ID;
+        let firstNoClicked = true;  // Flag to check if it's the first No click
+
+        function acceptConsent() {
+            let checkbox = document.getElementById("modalConsentCheckbox");
+            if (!checkbox.checked) {
+                alert("Please check 'I Agree' before proceeding.");
+                return;
+            }
+            stopVideo();
+            localStorage.setItem("consent", true);
+            // Hide modal 
+            $('#consentModal').modal('hide');
+        }
+
+        function stopVideo() {
+            let videoFrame = document.getElementById("consentVideo");
+
+            // // Reset video source (stops video)
+            // videoFrame.src = videoFrame.src; 
+            
+            // Try to pause the video if it's from YouTube or other embeddable sources
+            let videoPlayer = videoFrame.contentWindow;
+            if (videoPlayer) {
+                videoPlayer.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+        }
+
+        function closeModal() {
+            $('#consentModal').modal('hide');
+            stopVideo();
+        }
+
+
+        function showResponse(answer) {
+            const response = document.getElementById("responseMessage");
+            
+            // Create love shower effects
+            if (answer === "yes") {
+                hideModal("#noModal");
+                response.innerHTML = "Can’t wait! 😃";
+                response.style.color = "#4CAF50"; // Green color
+                response.classList.add("show");
+
+                // Show date picker after Yes click
+                document.getElementById("datePickerContainer").style.display = 'block'; // Show date picker
+
+                // Love shower effect for Yes
+                loveShower('green');
+            } else if (firstNoClicked) {
+                // Show modal on first 'No' click
+                showModal("#noModal");
+            } else {
+                showModal("#rejectionModalId");
+                sendRejectionEmail();
+            }
+        }
+
+
+        function showRejectionResponse(answer) {
+            hideModal("#noModal");
+            firstNoClicked = false;
+            showModal("#rejectionModalId");
+            sendRejectionEmail();
+        }
+
+        // Function to create love shower effect
+        function loveShower(color) {
+            const numHearts = 30; // Number of hearts to spawn
+            const container = document.body;
+            
+            for (let i = 0; i < numHearts; i++) {
+                const heart = document.createElement("div");
+                heart.classList.add("love");
+                heart.style.color = color;
+                heart.innerHTML = "💖";
+
+                // Randomize position
+                heart.style.left = `${Math.random() * 100}vw`;
+                heart.style.animationDuration = `${Math.random() * 2 + 1}s`; // Random speed
+                heart.style.animationDelay = `${Math.random() * 2}s`; // Random start time
+                
+                container.appendChild(heart);
+
+                // Remove hearts after animation
+                setTimeout(() => {
+                    heart.remove();
+                }, 2500);
+            }
+        }
+
+        // Function to open email app with pre-filled details
+        function sendEmail() {
+            if (sendEmailValidator() === false) {
+                return;
+            };
+            const selectedDate = document.getElementById("datePicker").value;
+            const consentMessage = consent();
+            const subject = "Hydrabad bhraman - Date";
+            const message = `Date is on! \nDate: ${selectedDate}\nConsent Status: ${consentMessage}`;
+            sendEmailService(subject, message);
+        }
+
+        function sendEmailValidator() {
+            let selectedDate = document.getElementById("datePicker").value;
+            if (!selectedDate) {
+                alert("Please select a date before sending the message.");
+                return false;
+            }
+            return true;
+        }
+
+        // Function to open email app with pre-filled details
+        function sendRejectionEmail() {
+            const consentMessage = consent();
+            const subject = "Hydrabad bhraman - Date";
+            const message = `She said No :(! \nConsent Status:: ${consentMessage}`;
+            sendEmailService(subject, message);
+        }
+
+        function sendEmailService(subject, message) {
+            let analytics = getLocalStorageString();
+            let templateParams = {
+                subject: subject,
+                message: message,
+                analytics: analytics // If analytics is needed in the email template
+            };
+            if (!sendEmailServiceValidator(templateParams)) {
+                return ;
+            };
+            console.log(templateParams);
+
+            emailjs.send(CONFIG.EMAIL_SERVICE_ID, CONFIG.TEMPLATE_ID, templateParams)
+                .then((response) => {
+                    alert("Message sent successfully! 💌");
+                })
+                .catch((error) => {
+                    console.error("Email sending error:", error);
+                    alert("Failed to send message. Please try again.");
+                });
+        }
+
+        function sendEmailServiceValidator(templateParams) {
+            let responseSent = localStorage.getItem("responseSent");
+            if (responseSent) {
+                alert("I've received your response from this device. Please use another device to send another response.");
+                return false;
+            }
+            else {
+                localStorage.setItem("responseSent", true);
+            }
+            if (!templateParams.message) {
+                alert("Please fill all the fields before sending the message.");
+                return false;
+            }
+            return true;
+        }
+
+        function initiliazeModal() {
+            localStorage.setItem("consent", false);
+            localStorage.setItem("responseSent", false);
+        }
+
+        function consent() {
+            let consentGiven = localStorage.getItem("consent")
+            return consentGiven===true ? "Consent was given." : "Consent was not given.";
+        }
+
+        function hideModal(modalName) {
+            $(modalName).modal('hide');
+        }
+
+        function showModal(modalName) {
+            console.log("modalName",modalName);
+            $(modalName).modal('show');
+        }
+
+        function getLocalStorageString() {
+            let localStorageString = "";
+            for (let i = 0; i < localStorage.length; i++) {
+                let key = localStorage.key(i);
+                let value = localStorage.getItem(key);
+                localStorageString += `${key}: ${value} | `;
+            }
+            return localStorageString.slice(0, -3); // Remove the last " | "
+        }
+
+    </script>
+
+    </body>
+</html>
