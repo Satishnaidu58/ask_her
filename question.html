@@ -132,16 +132,8 @@
     <body>
 
         <!-- Question -->
-        <p class="question">Yo! How about a grand Hyderabad bhraman for a day
-            date? 🏍✨</p>
-
-        <!-- Terms & Conditions -->
-        <!-- <div>
-            <label for="termsCheckbox" data-bs-toggle="modal"
-                data-bs-target="#consentModal">
-                <a href="#" class="link-primary">Read & Agree to Terms</a>
-            </label>
-        </div> -->
+        <p class="question">How about a memorable day exploring the vibrant heart of Hyderabad?</p>
+        <p  class="question">A grand tour for a perfect first date! 🏍✨</p>
 
         <!-- Buttons -->
         <div>
@@ -219,44 +211,6 @@
             </div>
         </div>
 
-        <!-- Consent Modal -->
-        <div class="modal fade" id="consentModal" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Consent is the most important
-                            thing in the world! ✅</h5>
-                        <button type="button" class="close" data-dismiss="modal"
-                            aria-label="Close" onclick="stopVideo()">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe id="consentVideo"
-                                class="embed-responsive-item"
-                                src="videos/consent.mp4"
-                                allowfullscreen></iframe>
-                        </div>
-                        <div class="mt-3">
-                            <input class="form-check-input" type="checkbox"
-                                id="modalConsentCheckbox">
-                            <label class="form-check-label"
-                                for="modalConsentCheckbox"> I Agree </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal"
-                            onclick="closeModal()">Close</button>
-                        <button type="button" class="btn btn-primary"
-                            onclick="acceptConsent()">Save Changes</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Scripts.Js -->
         <script src="config.js"></script>
 
@@ -295,37 +249,6 @@
         const EMAIL_SERVICE_ID = CONFIG.EMAIL_SERVICE_ID;
         const TEMPLATE_ID = CONFIG.TEMPLATE_ID;
         let firstNoClicked = true;  // Flag to check if it's the first No click
-
-        function acceptConsent() {
-            let checkbox = document.getElementById("modalConsentCheckbox");
-            if (!checkbox.checked) {
-                alert("Please check 'I Agree' before proceeding.");
-                return;
-            }
-            stopVideo();
-            localStorage.setItem("consent", true);
-            // Hide modal 
-            $('#consentModal').modal('hide');
-        }
-
-        function stopVideo() {
-            let videoFrame = document.getElementById("consentVideo");
-
-            // // Reset video source (stops video)
-            videoFrame.src = videoFrame.src; 
-            
-            // Try to pause the video if it's from YouTube or other embeddable sources
-            let videoPlayer = videoFrame.contentWindow;
-            if (videoPlayer) {
-                videoPlayer.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            }
-        }
-
-        function closeModal() {
-            $('#consentModal').modal('hide');
-            stopVideo();
-        }
-
 
         function showResponse(answer) {
             const response = document.getElementById("responseMessage");
@@ -390,9 +313,8 @@
                 return;
             };
             const selectedDate = document.getElementById("datePicker").value;
-            const consentMessage = consent();
             const subject = "Hydrabad bhraman - Date";
-            const message = `Date is on! \nDate: ${selectedDate}\nConsent Status: ${consentMessage}`;
+            const message = `Date is on! \nDate: ${selectedDate}`;
             sendEmailService(subject, message);
         }
 
@@ -407,9 +329,8 @@
 
         // Function to open email app with pre-filled details
         function sendRejectionEmail() {
-            const consentMessage = consent();
             const subject = "Hydrabad bhraman - Date";
-            const message = `She said No :(! \nConsent Status:: ${consentMessage}`;
+            const message = `She said No :(!`;
             sendEmailService(subject, message);
         }
 
@@ -474,13 +395,6 @@
 
 
         function initiliazeModal() {
-            localStorage.setItem("consent", false);
-            localStorage.setItem("responseSent", false);
-        }
-
-        function consent() {
-            let consentGiven = localStorage.getItem("consent")
-            return consentGiven===true ? "Consent was given." : "Consent was not given.";
         }
 
         function hideModal(modalName) {
